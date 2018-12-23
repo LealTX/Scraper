@@ -23,7 +23,8 @@ app.use(express.json());
 app.use(express.static("public"));
 
 //Creates and connects to MongoDB
-mongoose.connect("mongodb://localhost/scraperwk18", { useNewUrlParser: true });
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraperwk18";
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
 //Routes
 app.get("/scrape", function (re, res) {
