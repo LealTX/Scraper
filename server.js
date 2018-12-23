@@ -28,30 +28,78 @@ mongoose.connect("mongodb://localhost/scraperwk18", { useNewUrlParser: true });
 //Routes
 app.get("/scrape", function (re, res) {
     //Axios grabs the body of the page insterted below
-    axios.get("https://www.npr.org/").then(function (response) {
+    axios.get("http://www.allsportcrossfit.com/wod/").then(function (response) {
         //Loads the data in the $ variable
         const $ = cheerio.load(response.data);
 
         //Grabs the article in the page
-        $("article h3").each(function (i, element) {
+        $(".blog-content-wrapper").each(function (i, element) {
             const result = {};
 
             result.title = $(this)
+                .children(".post-header-wrapper")
+                .children(".post-header")
+                .children(".gdlr-blog-title")
                 .children("a")
                 .text();
             result.link = $(this)
+                .children(".post-header-wrapper")
+                .children(".post-header")
+                .children(".gdlr-blog-title")
                 .children("a")
                 .attr("href");
 
+            result.summary = $(this)
+                .children(".gdlr-blog-content")
+                .text();
+
             db.Article.create(result)
-                .then(function(dbArticle) {
+                .then(function (dbArticle) {
                     console.log(dbArticle);
                 })
-                .catch(function(err) {
+                .catch(function (err) {
                     console.log(err);
                 });
         });
 
         res.send("Scrap Complete");
     });
+});
+
+app.get("/articles", function(req, res) {
+    db.Article.find({})
+    .then(function(dbArticle) {
+        res.json(dbArticle);
+    })
+    .catch(function(err) {
+        res.json(err);
+    });
+});
+
+app.get("/articles/:id", function(req, res) {
+   db.Article.findOne({ _id: req.params.id })
+      .populate("note")
+      .then(function(dbArticle) {
+         res.json(dbArticle);
+      })
+      .catch(function(err) {
+         res.json(err);
+      });
+  });
+
+  app.post("/articles/:id", function(req, res) {
+     db.Note.create(req.body)
+      .then(function(dbNote) {
+        return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+      })
+      .then(function(dbArticle) {
+         res.json(dbArticle);
+      })
+      .catch(function(err) {
+       res.json(err);
+      });
+  });
+
+app.listen(PORT, function () {
+    console.log("App running on port " + PORT + "!");
 });

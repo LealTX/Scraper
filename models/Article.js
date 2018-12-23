@@ -11,7 +11,10 @@ const ArticleSchema = new Schema({
         type: String,
         require: true
     },
-
+    summary: {
+        type: String,
+        require: true
+    },
     note: {
         type: Schema.Types.ObjectId,
         ref: "Note"
