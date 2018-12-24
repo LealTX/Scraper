@@ -4,8 +4,12 @@ body {
     background-size: 100%;
     background-repeat: no-repeat;
     background-color: black;
+}
+
+h1, h2 {
     color: white;
 }
+
 #wrapper {
   width: 960px;
   margin-left: auto;
@@ -17,6 +21,7 @@ body {
   overflow: auto;
   width: 60%;
   height: 700px;
+  background: rgba(255,255,255, 0.3);
 }
 #notes {
   float: right;
@@ -34,4 +39,9 @@ input {
 textarea {
   height: 200px;
   font-size: 18px;
+}
+
+#deletenote {
+    background-color: #f44336;
+    margin-left: 25px;
 }
